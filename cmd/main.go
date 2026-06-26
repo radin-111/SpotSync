@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	server "SpotSync/internal"
+	"SpotSync/internal/config"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	cfg := config.LoadEnv()
+	db := config.ConnectDB(cfg)
+	server.Start(db, cfg)
 }
