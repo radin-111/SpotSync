@@ -14,11 +14,12 @@ type Config struct {
 }
 
 func LoadEnv() *Config {
+	
 	err := godotenv.Load(".env")
-
 	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+		log.Fatal("Error loading .env file")
 	}
+
 	return &Config{
 		Port:      os.Getenv("PORT"),
 		JWTSecret: os.Getenv("JWT_SECRET"),
