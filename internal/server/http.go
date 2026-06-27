@@ -26,7 +26,18 @@ func (cv *CustomValidator) Validate(i any) error {
 func Start(db *gorm.DB, cfg *config.Config) {
 	e := echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
-	e.Use(middleware.CORS())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{"*"},
+		AllowMethods: []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+			http.MethodOptions,
+		},
+	}))
 	e.Use(middleware.Recover())
 	e.Use(middleware.RequestLogger())
 
