@@ -1,7 +1,7 @@
 package httpResponse
 
 type ErrorResponse struct {
-	Code    int    `json:"code"`
+	Success bool   `json:"success"`
 	Message string `json:"message"`
-	Details string `json:"details,omitempty"`
+	Errors  string `json:"errors,omitempty"`
 }
