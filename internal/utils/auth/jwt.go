@@ -13,7 +13,7 @@ const (
 )
 
 type JWTService interface {
-	GenerateToken(userID uint, name string, email string) (string, error)
+	GenerateToken(userID uint, name string, email string, role string) (string, error)
 	VerifyToken(tokenString string) (*JWTClaims, error)
 }
 
@@ -26,6 +26,7 @@ type JWTClaims struct {
 	UserID uint   `json:"user_id"`
 	Name   string `json:"name"`
 	Email  string `json:"email"`
+	Role   string `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -40,11 +41,17 @@ func NewJWTService(secretKey string) JWTService {
 	}
 }
 
-func (js *jwtService) GenerateToken(userID uint, name string, email string) (string, error) {
+func (js *jwtService) GenerateToken(userID uint, name string, email string, role string) (string, error) {
 	claims := JWTClaims{
 		UserID: userID,
 		Name:   name,
 		Email:  email,
+		Role:   role,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(js.tokenDuration)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			Issuer:    "SpotSync",
+		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(js.secretKey))

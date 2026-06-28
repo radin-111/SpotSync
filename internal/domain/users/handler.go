@@ -67,7 +67,7 @@ func (h *handler) Login(c *echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, httpResponse.ErrorResponse{
 			Success: false,
 			Message: "Internal server error",
-			Errors:  err.Error(),
+			Errors:  "Invalid credentials",
 		})
 	}
 	return c.JSON(http.StatusOK, response)

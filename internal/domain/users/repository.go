@@ -36,7 +36,7 @@ func (r *repository) GetUserByEmail(email string) (*User, error) {
 	result := r.db.Where(&User{Email: email}).First(&user)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, nil
+			return nil, errors.New("Invalid credentials")
 		}
 		return nil, result.Error
 	}
