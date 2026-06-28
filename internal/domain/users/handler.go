@@ -2,7 +2,7 @@ package users
 
 import (
 	"SpotSync/internal/domain/users/dto"
-	httpResponse "SpotSync/internal/httpresponse"
+	"SpotSync/internal/httpResponse"
 
 	"net/http"
 
