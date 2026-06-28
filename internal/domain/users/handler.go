@@ -45,3 +45,30 @@ func (h *handler) CreateUser(c *echo.Context) error {
 	}
 	return c.JSON(http.StatusCreated, response)
 }
+
+func (h *handler) Login(c *echo.Context) error {
+	var req dto.LoginRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, httpResponse.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid request payload",
+			Details: err.Error(),
+		})
+	}
+	if err := c.Validate(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, httpResponse.ErrorResponse{
+			Code:    http.StatusBadRequest,
+			Message: "Validation failed",
+			Details: err.Error(),
+		})
+	}
+	response, err := h.service.Login(&req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, httpResponse.ErrorResponse{
+			Code:    http.StatusInternalServerError,
+			Message: "Internal server error",
+			Details: err.Error(),
+		})
+	}
+	return c.JSON(http.StatusOK, response)
+}

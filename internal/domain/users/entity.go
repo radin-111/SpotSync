@@ -21,7 +21,7 @@ type User struct {
 func (u *User) hashPassword(password string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	u.Password = string(hash)
 	return nil

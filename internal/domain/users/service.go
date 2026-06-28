@@ -2,15 +2,18 @@ package users
 
 import (
 	"SpotSync/internal/domain/users/dto"
+	"SpotSync/internal/utils/auth"
+	"fmt"
 	"time"
 )
 
 type service struct {
-	repo Repository
+	repo       Repository
+	jwtService auth.JWTService
 }
 
-func newService(repo Repository) *service {
-	return &service{repo: repo}
+func newService(repo Repository, jwtService auth.JWTService) *service {
+	return &service{repo: repo, jwtService: jwtService}
 }
 
 func (s *service) CreateUser(req *dto.RegistrationRequest) (*dto.RegistrationResponse, error) {
@@ -44,4 +47,34 @@ func (s *service) CreateUser(req *dto.RegistrationRequest) (*dto.RegistrationRes
 
 	return response, nil
 
+}
+
+func (s *service) Login(req *dto.LoginRequest) (*dto.LoginResponse, error) {
+	user, err := s.repo.GetUserByEmail(req.Email)
+	if err != nil {
+		return nil, err
+	}
+	if err := user.checkPassword(req.Password); err != nil {
+		return nil, err
+	}
+
+	token, err := s.jwtService.GenerateToken(user.ID, user.Name, user.Email)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate token: %w", err)
+	}
+
+	response := &dto.LoginResponse{
+		Success: true,
+		Message: "Login successful",
+		Data: dto.LoginUserData{
+			Token: token,
+			User: dto.LoginUserResponse{
+				ID:    int(user.ID),
+				Name:  user.Name,
+				Email: user.Email,
+				Role:  user.Role,
+			},
+		},
+	}
+	return response, nil
 }
