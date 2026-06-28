@@ -2,6 +2,9 @@ package server
 
 import (
 	"SpotSync/internal/config"
+	"SpotSync/internal/domain/parking_zones"
+	"SpotSync/internal/domain/reservations"
+	"SpotSync/internal/domain/users"
 	"fmt"
 	"net/http"
 
@@ -24,6 +27,7 @@ func (cv *CustomValidator) Validate(i any) error {
 }
 
 func Start(db *gorm.DB, cfg *config.Config) {
+	db.AutoMigrate(&users.User{}, &parking_zones.ParkingZone{}, &reservations.Reservation{})
 	e := echo.New()
 	e.Validator = &CustomValidator{validator: validator.New()}
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -46,7 +50,7 @@ func Start(db *gorm.DB, cfg *config.Config) {
 			"message": "Hello, World!",
 		})
 	})
-
+	users.RegisterRoutes(e, db, cfg)
 	port := fmt.Sprintf(":%s", cfg.Port)
 
 	if err := e.Start(port); err != nil {

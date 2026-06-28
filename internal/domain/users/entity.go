@@ -1,6 +1,9 @@
 package users
 
-import "gorm.io/gorm"
+import (
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
+)
 
 const (
 	UserRoleDriver = "driver"
@@ -13,4 +16,18 @@ type User struct {
 	Email    string `json:"email" gorm:"type:varchar(255);uniqueIndex;not null"`
 	Password string `json:"password" gorm:"type:varchar(255);not null"`
 	Role     string `json:"role" gorm:"type:varchar(10);default:driver"`
+}
+
+func (u *User) hashPassword(password string) error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+	}
+	u.Password = string(hash)
+	return nil
+}
+
+func (u *User) checkPassword(password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+
 }
