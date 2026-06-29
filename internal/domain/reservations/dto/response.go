@@ -16,3 +16,29 @@ type CreateReservation struct {
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 }
+
+type GetMyReservationsResponse struct {
+	Success bool            `json:"success"`
+	Message string          `json:"message"`
+	Data    []MyReservation `json:"data"`
+}
+
+type MyReservation struct {
+	ID uint `json:"id"`
+
+	LicensePlate string      `json:"license_plate"`
+	Status       string      `json:"status"`
+	Zone         ParkingZone `json:"zone"`
+	CreatedAt    time.Time   `json:"created_at"`
+}
+
+type ParkingZone struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+	Type string `json:"type"`
+}
+
+type DeleteReservationResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+}

@@ -1,6 +1,10 @@
 package reservations
 
-import "SpotSync/internal/domain/reservations/dto"
+import (
+	"SpotSync/internal/domain/reservations/dto"
+	"errors"
+	"fmt"
+)
 
 type service struct {
 	repo Repository
@@ -38,4 +42,44 @@ func (s *service) CreateReservation(reservation *dto.CreateReservationRequest, u
 	}
 	return response, nil
 
+}
+
+func (s *service) GetMyReservations(userId uint) (*dto.GetMyReservationsResponse, error) {
+
+	reservations, err := s.repo.GetAllReservationsByUserId(userId)
+	if err != nil {
+		return nil, err
+	}
+	response := &dto.GetMyReservationsResponse{
+		Success: true,
+		Message: "Reservations retrieved successfully",
+	}
+	for _, reservation := range reservations {
+		response.Data = append(response.Data, dto.MyReservation{
+			ID:           reservation.ID,
+			LicensePlate: reservation.LicensePlate,
+			Status:       reservation.Status,
+			CreatedAt:    reservation.CreatedAt,
+		})
+	}
+
+	fmt.Println(reservations)
+
+	return nil, nil
+
+}
+
+func (s *service) DeleteReservation(reservationId uint, userId uint) error {
+	reservation, err := s.repo.GetReservationById(reservationId)
+	if err != nil {
+		return err
+	}
+	if reservation.UserId != userId {
+		return errors.New("unauthorized")
+	}
+	err = s.repo.DeleteReservation(reservationId)
+	if err != nil {
+		return err
+	}
+	return nil
 }
