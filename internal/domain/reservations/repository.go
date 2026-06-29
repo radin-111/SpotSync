@@ -10,6 +10,7 @@ type Repository interface {
 	CreateReservation(reservation *Reservation) error
 	GetAllReservationsByUserId(userId uint) ([]Reservation, error)
 	DeleteReservation(reservationId uint) error
+	GetAllReservations() ([]Reservation, error)
 	GetReservationById(reservationId uint) (*Reservation, error)
 }
 type repository struct {
@@ -31,6 +32,19 @@ func (r *repository) GetAllReservationsByUserId(userId uint) ([]Reservation, err
 	result := r.db.
 		Preload("Zone").
 		Where("user_id = ?", userId).
+		Find(&reservations)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return reservations, nil
+}
+func (r *repository) GetAllReservations() ([]Reservation, error) {
+	var reservations []Reservation
+
+	result := r.db.
+		Preload("Zone").
 		Find(&reservations)
 
 	if result.Error != nil {

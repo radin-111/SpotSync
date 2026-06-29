@@ -80,3 +80,26 @@ func (s *service) GetAllReservationsByUserId(userId uint) (*dto.GetAllReservatio
 	}
 	return &response, nil
 }
+
+func (s *service) GetAllReservations() (*dto.GetAllReservationsResponse, error) {
+	var response dto.GetAllReservationsResponse
+	reservations, err := s.repo.GetAllReservations()
+	if err != nil {
+		return nil, err
+	}
+	for _, reservation := range reservations {
+		response.Data = append(response.Data, dto.GetAllReservation{
+			ID: reservation.ID,
+
+			LicensePlate: reservation.LicensePlate,
+			Status:       reservation.Status,
+			CreatedAt:    reservation.CreatedAt,
+			Zone: dto.ParkingZone{
+				ID:   reservation.Zone.ID,
+				Name: reservation.Zone.Name,
+				Type: reservation.Zone.Type,
+			},
+		})
+	}
+	return &response, nil
+}

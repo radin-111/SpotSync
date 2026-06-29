@@ -108,3 +108,15 @@ func (h *handler) GetAllReservationsByUserId(c *echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, reservations)
 }
+
+func (h *handler) GetAllReservations(c *echo.Context) error {
+	reservations, err := h.service.GetAllReservations()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, httpResponse.ErrorResponse{
+			Success: false,
+			Message: "Failed to get reservations",
+			Errors:  err.Error(),
+		})
+	}
+	return c.JSON(http.StatusOK, reservations)
+}
