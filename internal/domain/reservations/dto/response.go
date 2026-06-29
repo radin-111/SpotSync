@@ -17,13 +17,13 @@ type CreateReservation struct {
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
-type GetMyReservationsResponse struct {
-	Success bool            `json:"success"`
-	Message string          `json:"message"`
-	Data    []MyReservation `json:"data"`
+type GetAllReservationsResponse struct {
+	Success bool                `json:"success"`
+	Message string              `json:"message"`
+	Data    []GetAllReservation `json:"data"`
 }
 
-type MyReservation struct {
+type GetAllReservation struct {
 	ID uint `json:"id"`
 
 	LicensePlate string      `json:"license_plate"`

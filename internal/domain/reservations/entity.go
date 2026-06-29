@@ -22,3 +22,8 @@ type Reservation struct {
 	LicensePlate string                    `json:"license_plate" gorm:"type:varchar(20);not null;uniqueIndex:license_plate"`
 	Status       string                    `json:"status" gorm:"type:varchar(20);default:active"`
 }
+
+type ReservationWithZone struct {
+	Reservation
+	Zone parking_zones.ParkingZone `json:"zone"`
+}

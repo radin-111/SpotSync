@@ -58,26 +58,6 @@ func (h *handler) CreateReservation(c *echo.Context) error {
 	return c.JSON(http.StatusCreated, reservation)
 }
 
-func (h *handler) GetMyReservations(c *echo.Context) error {
-	userId, ok := getCurrentUserID(c)
-	if !ok {
-		return c.JSON(http.StatusBadRequest, httpResponse.ErrorResponse{
-			Success: false,
-			Message: "User ID not found",
-			Errors:  "User ID not found",
-		})
-	}
-	reservations, err := h.service.GetMyReservations(userId)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, httpResponse.ErrorResponse{
-			Success: false,
-			Message: "Failed to get reservations",
-			Errors:  err.Error(),
-		})
-	}
-	return c.JSON(http.StatusOK, reservations)
-}
-
 func (h *handler) DeleteReservation(c *echo.Context) error {
 	reservationId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -107,4 +87,24 @@ func (h *handler) DeleteReservation(c *echo.Context) error {
 		Success: true,
 		Message: "Reservation deleted successfully",
 	})
+}
+
+func (h *handler) GetAllReservationsByUserId(c *echo.Context) error {
+	userId, ok := getCurrentUserID(c)
+	if !ok {
+		return c.JSON(http.StatusBadRequest, httpResponse.ErrorResponse{
+			Success: false,
+			Message: "User ID not found",
+			Errors:  "User ID not found",
+		})
+	}
+	reservations, err := h.service.GetAllReservationsByUserId(userId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, httpResponse.ErrorResponse{
+			Success: false,
+			Message: "Failed to get reservations",
+			Errors:  err.Error(),
+		})
+	}
+	return c.JSON(http.StatusOK, reservations)
 }

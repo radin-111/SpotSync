@@ -3,7 +3,6 @@ package reservations
 import (
 	"SpotSync/internal/domain/reservations/dto"
 	"errors"
-	"fmt"
 )
 
 type service struct {
@@ -44,31 +43,6 @@ func (s *service) CreateReservation(reservation *dto.CreateReservationRequest, u
 
 }
 
-func (s *service) GetMyReservations(userId uint) (*dto.GetMyReservationsResponse, error) {
-
-	reservations, err := s.repo.GetAllReservationsByUserId(userId)
-	if err != nil {
-		return nil, err
-	}
-	response := &dto.GetMyReservationsResponse{
-		Success: true,
-		Message: "Reservations retrieved successfully",
-	}
-	for _, reservation := range reservations {
-		response.Data = append(response.Data, dto.MyReservation{
-			ID:           reservation.ID,
-			LicensePlate: reservation.LicensePlate,
-			Status:       reservation.Status,
-			CreatedAt:    reservation.CreatedAt,
-		})
-	}
-
-	fmt.Println(reservations)
-
-	return nil, nil
-
-}
-
 func (s *service) DeleteReservation(reservationId uint, userId uint) error {
 	reservation, err := s.repo.GetReservationById(reservationId)
 	if err != nil {
@@ -82,4 +56,27 @@ func (s *service) DeleteReservation(reservationId uint, userId uint) error {
 		return err
 	}
 	return nil
+}
+
+func (s *service) GetAllReservationsByUserId(userId uint) (*dto.GetAllReservationsResponse, error) {
+	var response dto.GetAllReservationsResponse
+	reservations, err := s.repo.GetAllReservationsByUserId(userId)
+	if err != nil {
+		return nil, err
+	}
+	for _, reservation := range reservations {
+		response.Data = append(response.Data, dto.GetAllReservation{
+			ID: reservation.ID,
+
+			LicensePlate: reservation.LicensePlate,
+			Status:       reservation.Status,
+			CreatedAt:    reservation.CreatedAt,
+			Zone: dto.ParkingZone{
+				ID:   reservation.Zone.ID,
+				Name: reservation.Zone.Name,
+				Type: reservation.Zone.Type,
+			},
+		})
+	}
+	return &response, nil
 }

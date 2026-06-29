@@ -28,7 +28,10 @@ func (r *repository) CreateReservation(reservation *Reservation) error {
 func (r *repository) GetAllReservationsByUserId(userId uint) ([]Reservation, error) {
 	var reservations []Reservation
 
-	result := r.db.Where("user_id = ?", userId).Find(&reservations)
+	result := r.db.
+		Preload("Zone").
+		Where("user_id = ?", userId).
+		Find(&reservations)
 
 	if result.Error != nil {
 		return nil, result.Error
