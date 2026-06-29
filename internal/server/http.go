@@ -47,7 +47,7 @@ func Start(db *gorm.DB, cfg *config.Config) {
 
 	e.GET("/", func(c *echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{
-			"message": "Hello, World!",
+			"message": "Welcome to SpotSync!",
 		})
 	})
 	users.RegisterRoutes(e, db, cfg)
