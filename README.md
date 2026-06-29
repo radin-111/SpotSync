@@ -307,6 +307,8 @@ All endpoints return error responses in the following format:
 ```
 
 Common HTTP status codes:
+- `200 OK` - Successful GET, PUT, PATCH, DELETE requests
+- `201 Created` - Successful POST request
 - `400 Bad Request` - Invalid request payload or validation failed
 - `401 Unauthorized` - Missing or invalid authentication
 - `403 Forbidden` - Insufficient permissions
