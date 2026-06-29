@@ -334,6 +334,3 @@ SpotSync/
 └── go.sum                   # Go dependencies
 ```
 
-## License
-
-MIT License
