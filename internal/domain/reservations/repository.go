@@ -1,6 +1,7 @@
 package reservations
 
 import (
+	"SpotSync/internal/domain/parking_zones"
 	"errors"
 
 	"gorm.io/gorm"
@@ -22,8 +23,36 @@ func NewRepository(db *gorm.DB) Repository {
 }
 
 func (r *repository) CreateReservation(reservation *Reservation) error {
-	result := r.db.Create(reservation)
-	return result.Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		var zone parking_zones.SpotWithAvailableSpots
+
+		result := r.db.Model(&parking_zones.ParkingZone{}).
+			Where("id = ?", reservation.ZoneId).
+			Select(`parking_zones.*,
+			total_capacity - (
+				SELECT COUNT(*)
+				FROM reservations
+				WHERE reservations.zone_id = parking_zones.id
+				AND reservations.status = ?
+			) AS available_spots
+		`, ReservationStatusActive).
+			Scan(&zone)
+
+		if result.Error != nil {
+			if result.Error == gorm.ErrRecordNotFound {
+				return errors.New("zone not found")
+			}
+			return result.Error
+		}
+
+		if zone.AvailableSpots <= 0 {
+			return errors.New("no available spots")
+		}
+		if err := tx.Create(reservation).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 
 }
 func (r *repository) GetAllReservationsByUserId(userId uint) ([]Reservation, error) {
