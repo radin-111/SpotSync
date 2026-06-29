@@ -51,7 +51,7 @@ func Start(db *gorm.DB, cfg *config.Config) {
 		})
 	})
 	users.RegisterRoutes(e, db, cfg)
-	parking_zones.RegisterRoutes(e, db)
+	parking_zones.RegisterRoutes(e, db, cfg)
 	port := fmt.Sprintf(":%s", cfg.Port)
 
 	if err := e.Start(port); err != nil {

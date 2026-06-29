@@ -30,8 +30,8 @@ func ValidateUser(jwtService auth.JWTService, roles []string) echo.MiddlewareFun
 			}
 
 			isAuthorized := contains(roles, claims.Role)
-			if !isAuthorized {
-				return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Unauthorized access"})
+			if len(roles) > 0 && !isAuthorized {
+				return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Forbidden"})
 			}
 			c.Set("user_id", claims.UserID)
 			c.Set("role", claims.Role)
