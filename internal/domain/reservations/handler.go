@@ -85,7 +85,7 @@ func (h *handler) DeleteReservation(c *echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, dto.DeleteReservationResponse{
 		Success: true,
-		Message: "Reservation deleted successfully",
+		Message: "Reservation cancelled successfully",
 	})
 }
 

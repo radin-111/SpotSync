@@ -16,5 +16,7 @@ func RegisterRoutes(e *echo.Echo, db *gorm.DB, cfg *config.Config) {
 	jwtService := auth.NewJWTService(cfg.JWTSecret)
 	parkingZHandler := NewHandler(parkingZService)
 	api := e.Group("/api/v1/zones")
+	api.GET("", parkingZHandler.GetAllParkingZones)
+	api.GET("/:id", parkingZHandler.GetParkingZoneByID)
 	api.POST("", parkingZHandler.CreateParkingZone, middlewares.ValidateUser(jwtService, []string{users.UserRoleAdmin}))
 }
